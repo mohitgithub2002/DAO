@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import Cookies from "js-cookie";
+import { useWeb3Modal } from '@web3modal/react'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 const Header = () => {
+  const { address, isConnected } = useAccount()
+  const { open, close } = useWeb3Modal()
   const [user,setUser]= useState();
   useEffect(() => {
     // Check if the user is authenticated
@@ -53,8 +57,10 @@ const Header = () => {
                   </div> */}
                 </div>
                 <div className="items-center justifybox height same and content size same, Its difficult to manage the ssection becuase images sizes is too much, if i set the images its look strechable -end  gap-x-4 lg:flex xl:gap-x-8">
-                  <button className="rounded-md text-white bg-gradient-to-tr from-blue-600 to-blue-400 shadow-sm bg-transparent font-bold borde py-3 px-4 text-[10px] xl:py-4 xl:px-8 xl:text-sm transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-105 duration-300">
-                    Connect Wallet
+                  <button className="rounded-md text-white bg-gradient-to-tr from-blue-600 to-blue-400 shadow-sm bg-transparent font-bold borde py-3 px-4 text-[10px] xl:py-4 xl:px-8 xl:text-sm transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-105 duration-300"
+                    onClick={() => open()}
+                  >
+                    {address?`${address.slice(0,4)}....${address.slice((address.length-4),(address.length))}`:"Connect Wallet"}
                   </button>
                 </div>
               </div>

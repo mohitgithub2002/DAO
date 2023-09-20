@@ -1,6 +1,40 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import {contractAddress,contractABI}from "../config"
+import { useContractRead } from 'wagmi'
 export const Details = () => {
+  const [question, setQuestion] =useState();
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  const [options,setOptions] = useState([]);
+  const [isActive, setIsActive] = useState();
+
+  const { data, isError, isLoading } = useContractRead({
+    address: contractAddress,
+    abi: contractABI,
+    functionName: 'getProposalById',
+    args: ["0"]
+  })
+  // 
+  console.log(data)
+  useEffect(()=>{
+    setQuestion(data[2]);
+    const startdate = new Date(Number(data[0])*1000);
+    const now =  Date.now();
+    const nowtime  = new Date(now);
+    const enddate = new Date(Number(data[1])*1000);
+    
+    if(now>=(Number(data[0])*1000)&&now<=(Number(data[1])*1000)){
+      setIsActive(true);
+    }
+    console.log(isActive)
+    setStartDate(startdate.toLocaleString())
+    setEndDate(enddate.toLocaleString())
+    console.log("now",nowtime);
+    
+  },[data])
+
+  
+
   return (
     <>
       <div className="px-3 py-4  pb-20  mt-20">
@@ -14,7 +48,7 @@ export const Details = () => {
 
           <div className="mt-32 items-center">
             <h2 className="text-sky-600 my-1 font-bold text-xl p-5 py-2">
-              Do you want P2P System ?
+              {question}
             </h2>
           </div>
 
@@ -26,21 +60,21 @@ export const Details = () => {
                   className="text-green-500"
                   style={{ overflowWrap: "break-word" }}
                 >
-                  Active
+                  {isActive?"Active":"Not Active"}
                 </td>
               </tr>
 
               <tr className="hover:bg-sky-200">
                 <td className="">Starting at</td>
                 <td className="" style={{ overflowWrap: "break-word" }}>
-                  21/03/2023, 20:00
+                  {startDate}
                 </td>
               </tr>
 
               <tr className="hover:bg-sky-200">
                 <td className="">Ending at</td>
                 <td className="" style={{ overflowWrap: "break-word" }}>
-                  23/03/2023, 21:00
+                  {endDate}
                 </td>
               </tr>
 
@@ -57,47 +91,50 @@ export const Details = () => {
                   Not declared yet
                 </td>
               </tr>
-
+            </tbody>
+          </table>  
+          <table className="w-full">
+            <tbody >
               <tr className="hover:bg-sky-200">
-                <td className=" ">
-                  <div className="flex justify-between">
-                    <div>
-                      A) <span>Yes</span>
+                  <td className=" ">
+                    <div className="flex justify-between">
+                      <div>
+                        A) <span>Yes</span>
+                      </div>
+                      <div>2300</div>
                     </div>
-                    <div>2300</div>
-                  </div>
 
-                  <div class="bg-transparent relative rounded-[2rem] mt-0 py-4 mb-2 flex justify-between items-center">
-                    <div class="bg-zinc-100 h-[20px] w-full absolute bottom-0 left-0 rounded-[2rem]">
-                      <span class="text-xs text-center absolute left-[40%] md:left-[45%] py-0.5 font-semibold z-20 text-black/50">
-                        77.66% Sold
-                      </span>
-                      <div
-                        class="py-1 w-full h-full  bg-gradient-to-tr from-blue-600 to-blue-400 relative rounded-[2rem] "
-                        style={{ width: "77.66%" }}
-                      ></div>
+                    <div class="bg-transparent relative rounded-[2rem] mt-0 py-4 mb-2 flex justify-between items-center">
+                      <div class="bg-zinc-100 h-[20px] w-full absolute bottom-0 left-0 rounded-[2rem]">
+                        <span class="text-xs text-center absolute left-[40%] md:left-[45%] py-0.5 font-semibold z-20 text-black/50">
+                          77.66% Sold
+                        </span>
+                        <div
+                          class="py-1 w-full h-full  bg-gradient-to-tr from-blue-600 to-blue-400 relative rounded-[2rem] "
+                          style={{ width: "77.66%" }}
+                        ></div>
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                <td className="" style={{ overflowWrap: "break-word" }}>
-                  <div className=" gjhMie">
-                    <span></span>
-                    <div class="flex items-center  w-full min-w-[200px] h-16">
-                      <input
-                        type="number"
-                        class="peer w-[200px]  bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent  text-sm px-3 py-3 rounded-md border-blue-gray-200 focus:border-blue-500"
-                        placeholder=" "
-                      />
-                      <button
-                        class="middle none font-sans font-bold center capatelize  transition-all  text-xs py-2 px-2 mx-5 rounded-lg bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] block w-[50px]"
-                        type="button"
-                      >
-                        Vote
-                      </button>
+                  <td className="" style={{ overflowWrap: "break-word" }}>
+                    <div className=" gjhMie">
+                      <span></span>
+                      <div class="flex items-center  w-full min-w-[200px] h-16">
+                        <input
+                          type="number"
+                          class="peer w-[200px]  bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent  text-sm px-3 py-3 rounded-md border-blue-gray-200 focus:border-blue-500"
+                          placeholder=" "
+                        />
+                        <button
+                          class="middle none font-sans font-bold center capatelize  transition-all  text-xs py-2 px-2 mx-5 rounded-lg bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] block w-[50px]"
+                          type="button"
+                        >
+                          Vote
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
               </tr>
 
               <tr className="hover:bg-sky-200">
@@ -185,6 +222,8 @@ export const Details = () => {
               </tr>
             </tbody>
           </table>
+              
+          
         </div>
       </div>
     </>

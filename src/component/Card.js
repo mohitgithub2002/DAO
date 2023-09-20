@@ -1,7 +1,10 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-
+import {contractAddress,contractABI}from "../config"
+import { useContractRead } from 'wagmi'
+import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 const Card = () => {
+
   
   return (
     <>

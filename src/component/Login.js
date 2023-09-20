@@ -21,7 +21,8 @@ const Hero = () => {
         //     console.log(error);
         // }
         axios.get(urlWithParams).then(response =>{
-            if(response.status === 200){
+            console.log(response.data)
+            if(response.data.total_investment){
                 console.log(response.data.total_investment)
                 Cookies.set('user', JSON.stringify({user_id : email, total_investment : response.data.total_investment}))
                 window.location.href= "/"

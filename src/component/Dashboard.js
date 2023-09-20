@@ -1,6 +1,32 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import {contractAddress,contractABI}from "../config"
+import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+import Cookies from "js-cookie";
 const Dashboard = () => {
+    const [totalInvestment,setTotalInvestment]= useState();
+    
+    useEffect(() => {
+        // Check if the user is authenticated
+        const userData = Cookies.get("user");
+        if(userData){
+            setTotalInvestment(JSON.parse(userData).total_investment);
+        }
+    }, []);
+    const { config } = usePrepareContractWrite({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: 'userVoteByProposalId',
+        args:[0,0,20],
+        onSuccess(data) {
+          console.log('Success', data)
+        },
+        onError(error) {
+          console.log('Error', error)
+        },
+      })
+    
+    const {data, write } = useContractWrite(config)
+    console.log(data);
     return (
         <>
             <div class="relative min-h-screen w-full  z-0">
@@ -16,7 +42,7 @@ const Dashboard = () => {
                             <div className="my-3 ">
 
                                 <h1 className="font-bold text-sky-600 text-md sm:text-lg md:text-xl my-2 ">
-                                    Total Investment : 500 USD
+                                    Total Investment : {totalInvestment} USD
                                 </h1>
                                 <h1 className="font-bold text-sky-600 text-md sm:text-lg md:text-xl my-2 ">
                                     Claimed Investment : 200 USD                            </h1>
@@ -49,6 +75,7 @@ const Dashboard = () => {
                             <button
                                 class="middle none font-sans font-bold center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xl py-3 px-6 rounded-lg bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] block w-full"
                                 type="button"
+                                onClick={()=>write()}
                             >
                                 Claim Now
                             </button>
